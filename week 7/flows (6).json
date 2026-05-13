@@ -1,0 +1,186 @@
+[
+    {
+        "id": "097c610f88118d63",
+        "type": "tab",
+        "label": "Flow 7",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "cdab2c22ce325ea4",
+        "type": "inject",
+        "z": "097c610f88118d63",
+        "name": "inject",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{  \"device_id\": \"GATEWAY_01\",  \"battery\": 85,  \"status\": \"active\",  \"sensors_attached\": [\"temperature\", \"humidity\", \"soil_moisture\"],  \"active_warnings\": [{\"code\": 102, \"severity\": \"low\"}, {\"code\": 505, \"severity\": \"critical\"}],  \"transmission_count\": 100 }",
+        "payloadType": "json",
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "4d787f14d7fb1cd2"
+            ]
+        ]
+    },
+    {
+        "id": "4d787f14d7fb1cd2",
+        "type": "mongodb4",
+        "z": "097c610f88118d63",
+        "clientNode": "ad81b78dffe63638",
+        "mode": "collection",
+        "collection": "sensor_data",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 360,
+        "y": 140,
+        "wires": [
+            [
+                "a1f0c87f1afd99e3"
+            ]
+        ]
+    },
+    {
+        "id": "1e80fdfed23095ba",
+        "type": "inject",
+        "z": "097c610f88118d63",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 240,
+        "wires": [
+            [
+                "2df5e136b284b687"
+            ]
+        ]
+    },
+    {
+        "id": "2df5e136b284b687",
+        "type": "function",
+        "z": "097c610f88118d63",
+        "name": "compare",
+        "func": "msg.payload = {\n \"battery\": { \"$gte\": 20, \"$lt\": 90 },\n \"status\": { \"$ne\": \"maintenance\" }\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 240,
+        "wires": [
+            [
+                "3f071cf57e370bdf"
+            ]
+        ]
+    },
+    {
+        "id": "be7f0a0e71d98d30",
+        "type": "debug",
+        "z": "097c610f88118d63",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3f071cf57e370bdf",
+        "type": "mongodb4",
+        "z": "097c610f88118d63",
+        "clientNode": "ad81b78dffe63638",
+        "mode": "collection",
+        "collection": "battery, maintenance, status",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 550,
+        "y": 240,
+        "wires": [
+            [
+                "be7f0a0e71d98d30"
+            ]
+        ]
+    },
+    {
+        "id": "a1f0c87f1afd99e3",
+        "type": "debug",
+        "z": "097c610f88118d63",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "ad81b78dffe63638",
+        "type": "mongodb4-client",
+        "name": "MongoDB Docker",
+        "protocol": "mongodb",
+        "hostname": "",
+        "port": "",
+        "dbName": "smart_campus",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "mongodb://host.docker.internal:27017/smart_campus?directConnection=true",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-advanced"
+    },
+    {
+        "id": "0d6e497cb8ba65b4",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-mongodb4": "3.4.0"
+        }
+    }
+]

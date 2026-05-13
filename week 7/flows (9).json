@@ -1,0 +1,320 @@
+[
+    {
+        "id": "1b5f4e087c3f0c1b",
+        "type": "tab",
+        "label": "Flow 10",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c79483221c3f5ae8",
+        "type": "function",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "push",
+        "func": "var filter = { \"device_id\": \"GATEWAY_01\" };\n\nvar update = {\n    \"$push\": {\n        \"sensors_attached\": \"light_level\"\n    }\n};\n\nmsg.payload = [filter, update];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 260,
+        "wires": [
+            [
+                "ad96854038875afc"
+            ]
+        ]
+    },
+    {
+        "id": "6f360d4364dbf730",
+        "type": "mongodb4",
+        "z": "1b5f4e087c3f0c1b",
+        "clientNode": "ad81b78dffe63638",
+        "mode": "collection",
+        "collection": "devices",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 730,
+        "y": 260,
+        "wires": [
+            [
+                "3f1c564315102e16"
+            ]
+        ]
+    },
+    {
+        "id": "41dec74b31140db2",
+        "type": "inject",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "c79483221c3f5ae8"
+            ]
+        ]
+    },
+    {
+        "id": "3f1c564315102e16",
+        "type": "debug",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "ad96854038875afc",
+        "type": "function",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "pop",
+        "func": "var filter = { \"device_id\": \"GATEWAY_01\" };\n\nvar update = {\n    \"$pop\": {\n        \"sensors_attached\": -1\n    }\n};\n\nmsg.payload = [filter, update];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 260,
+        "wires": [
+            [
+                "6f360d4364dbf730"
+            ]
+        ]
+    },
+    {
+        "id": "2f9c94b395e27d13",
+        "type": "function",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "add/pull",
+        "func": "var filter = { \"device_id\": \"GATEWAY_01\" };\nvar update = {\n \"$addToSet\": { \"sensors_attached\": \"light_level\" },\n// Will not duplicate if it already exists\n \"$pull\": { \"active_warnings\": { \"code\": 102 } }\n// Removes the specific object from the array\n};\nmsg.payload = [filter, update];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 360,
+        "wires": [
+            [
+                "2ced391aca255165"
+            ]
+        ]
+    },
+    {
+        "id": "2ced391aca255165",
+        "type": "mongodb4",
+        "z": "1b5f4e087c3f0c1b",
+        "clientNode": "ad81b78dffe63638",
+        "mode": "collection",
+        "collection": "devices",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 730,
+        "y": 360,
+        "wires": [
+            [
+                "8cd5caadb09ce6f1"
+            ]
+        ]
+    },
+    {
+        "id": "240e5368f6b69655",
+        "type": "inject",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "2f9c94b395e27d13"
+            ]
+        ]
+    },
+    {
+        "id": "8cd5caadb09ce6f1",
+        "type": "debug",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "082aa71c7e445b76",
+        "type": "function",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "match",
+        "func": "msg.payload = {\n    \"active_warnings\": {\n        \"$elemMatch\": {\n            \"code\": { $gt: 500 },\n            \"severity\": \"critical\"\n        }\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 460,
+        "wires": [
+            [
+                "65e78148ff1c7b4f"
+            ]
+        ]
+    },
+    {
+        "id": "65e78148ff1c7b4f",
+        "type": "mongodb4",
+        "z": "1b5f4e087c3f0c1b",
+        "clientNode": "ad81b78dffe63638",
+        "mode": "collection",
+        "collection": "devices",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 710,
+        "y": 460,
+        "wires": [
+            [
+                "d17385770b3087d6"
+            ]
+        ]
+    },
+    {
+        "id": "5be2ede2f7832a74",
+        "type": "inject",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 460,
+        "wires": [
+            [
+                "082aa71c7e445b76"
+            ]
+        ]
+    },
+    {
+        "id": "d17385770b3087d6",
+        "type": "debug",
+        "z": "1b5f4e087c3f0c1b",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "ad81b78dffe63638",
+        "type": "mongodb4-client",
+        "name": "MongoDB Docker",
+        "protocol": "mongodb",
+        "hostname": "",
+        "port": "",
+        "dbName": "smart_campus",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "mongodb://host.docker.internal:27017/smart_campus?directConnection=true",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-advanced"
+    },
+    {
+        "id": "8406a00109372e4b",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-mongodb4": "3.4.0"
+        }
+    }
+]
